@@ -76,7 +76,8 @@
 - `C#`
 - `Windows Forms`
 - `.NET Framework 4.8`
-- `NAudio 2.3.0`
+- `NAudio 2.0.0`
+- `NAudio.Core 2.0.0`
 - `NAudio.Vorbis 1.5.0`
 
 ## 目录结构

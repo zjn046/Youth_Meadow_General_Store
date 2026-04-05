@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using YouthMeadowGeneralStore.Configuration;
 
 namespace YouthMeadowGeneralStore.Models
 {
@@ -16,10 +17,10 @@ namespace YouthMeadowGeneralStore.Models
         public List<ShelfSlot> ShelfSlots { get; set; } = new List<ShelfSlot>();
 
         [DataMember(Name = "current_date")]
-        public string CurrentDate { get; set; } = "7月1日";
+        public string CurrentDate { get; set; } = GameAppConfig.DefaultCurrentDate;
 
         [DataMember(Name = "bg_music")]
-        public string BackgroundMusic { get; set; } = "背景0.mp3";
+        public string BackgroundMusic { get; set; } = GameAppConfig.DefaultBackgroundTrack;
 
         [DataMember(Name = "matchmaking_done")]
         public bool MatchmakingDone { get; set; }

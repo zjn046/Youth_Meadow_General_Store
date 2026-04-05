@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using YouthMeadowGeneralStore.Configuration;
 
 namespace YouthMeadowGeneralStore.Services
 {
@@ -23,7 +25,7 @@ namespace YouthMeadowGeneralStore.Services
 
         public SoundManager()
         {
-            _soundDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sounds");
+            _soundDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GameAppConfig.SoundsDirectoryName);
             Volume = 50;
             _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(MixerSampleRate, 2))
             {
@@ -34,19 +36,7 @@ namespace YouthMeadowGeneralStore.Services
                 DesiredLatency = 100
             };
             _outputDevice.Init(_mixer);
-            _effects = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["startup"] = GetPath("开业.wav"),
-                ["purchase"] = GetPath("购入.wav"),
-                ["shelf"] = GetPath("上架.wav"),
-                ["Discard"] = GetPath("丢弃.wav"),
-                ["business"] = GetPath("营业.wav"),
-                ["result_a"] = GetPath("结果a.wav"),
-                ["result_b"] = GetPath("结果b.wav"),
-                ["result_c"] = GetPath("结果c.wav"),
-                ["select_a"] = GetPath("选择a.wav"),
-                ["select_b"] = GetPath("选择b.wav")
-            };
+            _effects = GameAppConfig.SoundEffectFiles.ToDictionary(item => item.Key, item => GetPath(item.Value), StringComparer.OrdinalIgnoreCase);
         }
 
         public int Volume { get; private set; }

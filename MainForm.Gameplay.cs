@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using YouthMeadowGeneralStore.Configuration;
 using YouthMeadowGeneralStore.Models;
 
 namespace YouthMeadowGeneralStore
@@ -133,56 +134,29 @@ namespace YouthMeadowGeneralStore
 
         private void IncrementDate()
         {
-            var monthDays = new Dictionary<int, int>
-            {
-                [7] = 31,
-                [8] = 31,
-                [9] = 30,
-                [10] = 31,
-                [11] = 30,
-                [12] = 31,
-                [1] = 31,
-                [2] = 28,
-                [3] = 31,
-                [4] = 30,
-                [5] = 31,
-                [6] = 30
-            };
-
-            if (!TryParseCurrentDate(out var month, out var day))
+            if (!MonthDay.TryParse(_currentDate, out var currentDate))
             {
                 ShowError($"日期解析错误：{_currentDate}");
-                month = 7;
-                day = 1;
+                currentDate = new MonthDay(7, 1);
             }
 
-            day++;
-            if (day > monthDays[month])
-            {
-                day = 1;
-                month = month == 12 ? 1 : month + 1;
-            }
-
-            _currentDate = $"{month}月{day}日";
+            _currentDate = currentDate.NextDay(GameAppConfig.MonthDays).ToDisplayString();
             CheckFestivals();
             AutoSave();
         }
 
         private bool TryParseCurrentDate(out int month, out int day)
         {
-            month = 7;
-            day = 1;
-            try
+            if (MonthDay.TryParse(_currentDate, out var currentDate))
             {
-                var parts = _currentDate.Replace("月", " ").Replace("日", string.Empty).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                month = int.Parse(parts[0]);
-                day = int.Parse(parts[1]);
+                month = currentDate.Month;
+                day = currentDate.Day;
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+
+            month = 7;
+            day = 1;
+            return false;
         }
 
         private bool ShouldTriggerTobaccoEvent()
@@ -206,7 +180,7 @@ namespace YouthMeadowGeneralStore
 
         private void FinishGame()
         {
-            _soundManager.PlayBackground("背景0.mp3");
+            _soundManager.PlayBackground(GameAppConfig.DefaultBackgroundTrack);
             ShowInfo(
                 "这一年，在村里经营小卖部的日子，忙碌而充实。无数个清晨，赶在阳光洒满村落之前，我便开始整理货物、擦拭货架；\n" +
                 "无数个夜晚，伴着月色与星光，我才结束一天的营业，盘点着一天的收支。每一次与村民的交流，每一笔小小的交易，都饱含着辛勤的汗水。\n" +

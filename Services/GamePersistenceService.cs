@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using YouthMeadowGeneralStore.Configuration;
 using YouthMeadowGeneralStore.Models;
 
 namespace YouthMeadowGeneralStore.Services
@@ -13,8 +14,8 @@ namespace YouthMeadowGeneralStore.Services
 
         public GamePersistenceService(string baseDirectory)
         {
-            _savePath = Path.Combine(baseDirectory, "save.dat");
-            _encryptionService = new SaveEncryptionService("mysecretkey");
+            _savePath = Path.Combine(baseDirectory, GameAppConfig.SaveFileName);
+            _encryptionService = new SaveEncryptionService(GameAppConfig.SaveEncryptionKey);
             _serializer = new DataContractJsonSerializer(typeof(GameSaveData));
         }
 

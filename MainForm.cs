@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using YouthMeadowGeneralStore.Configuration;
 using YouthMeadowGeneralStore.Dialogs;
 using YouthMeadowGeneralStore.Models;
 using YouthMeadowGeneralStore.Services;
@@ -16,12 +17,15 @@ namespace YouthMeadowGeneralStore
         private readonly SoundManager _soundManager;
         private readonly GamePersistenceService _persistenceService;
         private readonly Random _random = new Random();
+        private List<RandomEventDefinition> _generalRandomEventDefinitions;
+        private List<RandomEventDefinition> _priorityRandomEventDefinitions;
+        private List<SpecialDateEventDefinition> _specialDateEventDefinitions;
         private bool _bankruptcyTriggered;
         private bool _initialBackgroundStarted;
         private decimal _money = 1000m;
-        private string _currentBackground = "背景0.mp3";
+        private string _currentBackground = GameAppConfig.DefaultBackgroundTrack;
         private bool _isNewGame = true;
-        private string _currentDate = "7月1日";
+        private string _currentDate = GameAppConfig.DefaultCurrentDate;
         private readonly Dictionary<string, int> _dailyPurchase = new Dictionary<string, int>();
         private decimal _salesModifier = 1m;
         private bool _relationshipEstablished;
@@ -39,6 +43,7 @@ namespace YouthMeadowGeneralStore
             _warehouse = new List<Product>();
             _productList = CreateBaseProducts();
             _shelfSlots = CreateInitialShelfSlots();
+            InitializeEventDefinitions();
 
             InitializeComponent();
             WireEvents();
@@ -163,8 +168,8 @@ namespace YouthMeadowGeneralStore
                 _money = saveData.Money;
                 _warehouse = saveData.Warehouse ?? new List<Product>();
                 _shelfSlots = (saveData.ShelfSlots ?? CreateInitialShelfSlots()).Select(slot => slot.Clone()).ToList();
-                _currentDate = string.IsNullOrWhiteSpace(saveData.CurrentDate) ? "7月1日" : saveData.CurrentDate;
-                _currentBackground = string.IsNullOrWhiteSpace(saveData.BackgroundMusic) ? "背景0.mp3" : saveData.BackgroundMusic;
+                _currentDate = string.IsNullOrWhiteSpace(saveData.CurrentDate) ? GameAppConfig.DefaultCurrentDate : saveData.CurrentDate;
+                _currentBackground = string.IsNullOrWhiteSpace(saveData.BackgroundMusic) ? GameAppConfig.DefaultBackgroundTrack : saveData.BackgroundMusic;
                 _matchmakingDone = saveData.MatchmakingDone;
                 _relationshipEstablished = saveData.RelationshipEstablished;
                 _event520Done = saveData.Event520Done;
@@ -175,8 +180,8 @@ namespace YouthMeadowGeneralStore
                 _money = 1000m;
                 _warehouse = new List<Product>();
                 _shelfSlots = CreateInitialShelfSlots();
-                _currentDate = "7月1日";
-                _currentBackground = "背景0.mp3";
+                _currentDate = GameAppConfig.DefaultCurrentDate;
+                _currentBackground = GameAppConfig.DefaultBackgroundTrack;
                 _isNewGame = true;
             }
         }
@@ -334,9 +339,9 @@ namespace YouthMeadowGeneralStore
 
             btnStartBusiness.Enabled = false;
             _soundManager.PlayEffect("business");
-            if (_currentDate == "7月1日")
+            if (_currentDate == GameAppConfig.DefaultCurrentDate)
             {
-                _currentBackground = "背景1.mp3";
+                _currentBackground = GameAppConfig.FirstBusinessBackgroundTrack;
                 _soundManager.PlayBackground(_currentBackground);
             }
 
@@ -628,28 +633,7 @@ namespace YouthMeadowGeneralStore
 
         private static List<Product> CreateBaseProducts()
         {
-            return new List<Product>
-            {
-                new Product { Name = "雪碧", Buy = 1m, Sell = 3m },
-                new Product { Name = "可乐", Buy = 1m, Sell = 3m },
-                new Product { Name = "笔记本", Buy = 1m, Sell = 2m },
-                new Product { Name = "钢笔", Buy = 1m, Sell = 2m },
-                new Product { Name = "旺仔牛奶", Buy = 1m, Sell = 4m },
-                new Product { Name = "苏打饼", Buy = 2m, Sell = 4m },
-                new Product { Name = "乐视薯片", Buy = 2m, Sell = 3m },
-                new Product { Name = "白象方便面", Buy = 2m, Sell = 4m },
-                new Product { Name = "文件袋", Buy = 2m, Sell = 3m },
-                new Product { Name = "王老吉", Buy = 2m, Sell = 4m },
-                new Product { Name = "早餐面包", Buy = 2m, Sell = 5m },
-                new Product { Name = "果粒橙", Buy = 2m, Sell = 5m },
-                new Product { Name = "珠江啤酒", Buy = 5m, Sell = 8m },
-                new Product { Name = "红塔山", Buy = 7m, Sell = 10m },
-                new Product { Name = "二锅头", Buy = 8m, Sell = 10m },
-                new Product { Name = "黄鹤楼", Buy = 15m, Sell = 20m },
-                new Product { Name = "合金甩棍", Buy = 20m, Sell = 30m },
-                new Product { Name = "菜刀", Buy = 20m, Sell = 35m },
-                new Product { Name = "软中华", Buy = 60m, Sell = 75m }
-            };
+            return GameContentConfig.CreateBaseProducts();
         }
 
         private static List<ShelfSlot> CreateInitialShelfSlots()
