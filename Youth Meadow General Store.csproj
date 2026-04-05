@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Youth Meadow General Store</AssemblyName>
+    <RootNamespace>YouthMeadowGeneralStore</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyTitle>青春田野小卖部</AssemblyTitle>
+    <Title>青春田野小卖部</Title>
+    <Product>青春田野小卖部</Product>
+    <Description>青春田野小卖部</Description>
+    <FileDescription>青春田野小卖部</FileDescription>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>false</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="sounds\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fody" Version="6.9.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Costura.Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
+  </ItemGroup>
+
+  <Target Name="RemoveRedundantOutputs" AfterTargets="Build">
+    <ItemGroup>
+      <EmbeddedAssemblyOutputs Include="$(TargetDir)*.dll" />
+    </ItemGroup>
+    <Delete Files="@(EmbeddedAssemblyOutputs)" ContinueOnError="true" />
+    <Delete Files="$(TargetDir)$(TargetName).pdb" ContinueOnError="true" />
+    <Delete Files="$(TargetPath).config" ContinueOnError="true" />
+  </Target>
+</Project>
