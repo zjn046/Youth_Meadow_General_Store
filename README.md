@@ -120,10 +120,11 @@ Youth Meadow General Store/
 
 ### 方式一：使用命令行
 
-在项目根目录执行：
+先进入项目目录，再执行：
 
 ```powershell
-dotnet build "D:/python/game/Youth Meadow General Store/Youth Meadow General Store.sln"
+cd "Youth Meadow General Store"
+dotnet build "Youth Meadow General Store.sln"
 ```
 
 ### 方式二：使用 Visual Studio
