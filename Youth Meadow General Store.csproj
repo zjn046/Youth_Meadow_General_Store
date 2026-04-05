@@ -26,22 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.9.3">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Costura.Fody" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="NAudio" Version="2.3.0" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
   </ItemGroup>
 
   <Target Name="RemoveRedundantOutputs" AfterTargets="Build">
-    <ItemGroup>
-      <EmbeddedAssemblyOutputs Include="$(TargetDir)*.dll" />
-    </ItemGroup>
-    <Delete Files="@(EmbeddedAssemblyOutputs)" ContinueOnError="true" />
     <Delete Files="$(TargetDir)$(TargetName).pdb" ContinueOnError="true" />
     <Delete Files="$(TargetPath).config" ContinueOnError="true" />
   </Target>

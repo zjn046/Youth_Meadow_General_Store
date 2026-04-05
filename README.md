@@ -50,7 +50,7 @@
 
 - 当前仓库托管的是 WinForms 迁移版本。
 - 旧版 Python 存档不兼容，当前版本使用新的 `save.dat` 格式。
-- 输出目标是单个 `.exe` 主程序，依赖 DLL 会在构建阶段嵌入可执行文件内部。
+- 输出目标是标准桌面程序结构，主程序、依赖 DLL 和音频资源分别放在输出目录中。
 - 音效与背景音乐资源保留为项目目录内的 `sounds/` 外部资源目录。
 
 ## 命名说明
@@ -68,7 +68,7 @@
 - 节日事件与随机事件拆分为多文件维护
 - 支持启动音、背景音乐、结果音、选择音、营业音等音频播放
 - 背景音乐与音效走统一混音输出，避免播放音效时背景被抢设备卡顿
-- 构建输出自动清理 `.dll`、`.pdb`、`.config` 冗余文件
+- 构建输出自动清理 `.pdb`、`.config` 冗余文件
 - 解决方案与项目已经分离命名，便于使用 Visual Studio 或命令行维护
 
 ## 技术栈
@@ -78,8 +78,6 @@
 - `.NET Framework 4.8`
 - `NAudio 2.3.0`
 - `NAudio.Vorbis 1.5.0`
-- `Fody 6.9.3`
-- `Costura.Fody 6.0.0`
 
 ## 目录结构
 
@@ -100,7 +98,6 @@ Youth Meadow General Store/
 ├─ MainForm.RandomEvents.Part3.cs
 ├─ MainForm.RandomEvents.SpecialDates.cs
 ├─ Program.cs                        # 程序入口
-├─ FodyWeavers.xml                   # Costura 配置
 ├─ Youth Meadow General Store.csproj # 项目文件
 └─ Youth Meadow General Store.sln    # 解决方案文件
 ```
@@ -152,16 +149,14 @@ bin/Debug/net48/Youth Meadow General Store.exe
 构建完成后，输出目录原则上只保留：
 
 - `Youth Meadow General Store.exe`
+- 运行所需的依赖 `*.dll`
 - `sounds/`
 - 运行后生成的 `save.dat`
 
 以下内容会在构建后自动清理：
 
-- `*.dll`
 - `*.pdb`
 - `*.config`
-
-依赖库通过 `Costura.Fody` 嵌入进主程序内部，不再作为外部 DLL 分发。
 
 ## 音频系统说明
 
@@ -176,9 +171,9 @@ bin/Debug/net48/Youth Meadow General Store.exe
 - 背景音乐与音效使用统一混音输出
 - 上架、购买、营业、结果、选择等音效按功能分类播放
 
-### 为什么音频资源没有嵌进 exe
+### 为什么音频资源仍然保留为外部目录
 
-当前实现只把代码依赖 DLL 嵌入到 `.exe` 中，`sounds/` 目录仍然作为外部资源保留。这样做的原因是：
+当前实现保持 `sounds/` 目录为外部资源。这样做的原因是：
 
 - 更容易替换或调整音频资源
 - 避免把大量媒体文件塞入主程序导致体积和维护成本上升
