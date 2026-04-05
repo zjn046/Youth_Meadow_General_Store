@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YouthMeadowGeneralStore.Configuration;
@@ -160,7 +161,8 @@ namespace YouthMeadowGeneralStore
 
         private async Task<bool> HandleRandomMarketAsync(Product[] products)
         {
-            foreach (var item in products.OrderBy(_ => _random.Next()).Take(_random.Next(1, products.Length + 1)))
+            var selectedItems = GetRandomSample(products, _random.Next(1, products.Length + 1));
+            foreach (var item in selectedItems)
             {
                 _warehouse.Add(item.Clone());
                 _money -= 100m;
@@ -172,6 +174,20 @@ namespace YouthMeadowGeneralStore
             }
 
             return true;
+        }
+
+        private IReadOnlyList<Product> GetRandomSample(IReadOnlyList<Product> products, int count)
+        {
+            var pool = products.ToList();
+            for (var i = 0; i < count; i++)
+            {
+                var swapIndex = _random.Next(i, pool.Count);
+                var temp = pool[i];
+                pool[i] = pool[swapIndex];
+                pool[swapIndex] = temp;
+            }
+
+            return pool.Take(count).ToList();
         }
     }
 }

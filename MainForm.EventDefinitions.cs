@@ -47,7 +47,7 @@ namespace YouthMeadowGeneralStore
                 new RandomEventDefinition(22, _ => true, HandleEvent22),
                 new RandomEventDefinition(23, _ => true, HandleEvent23),
                 new RandomEventDefinition(24, _ => true, HandleEvent24),
-                new RandomEventDefinition(25, _ => _money >= 10000m, HandleEvent25),
+                new RandomEventDefinition(25, _ => true, HandleEvent25),
                 new RandomEventDefinition(26, _ => true, HandleEvent26),
                 new RandomEventDefinition(28, _ => ShouldTriggerTobaccoEvent(), HandleEvent28, 0.1)
             };
